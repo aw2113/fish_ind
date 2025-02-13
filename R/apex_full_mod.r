@@ -115,6 +115,7 @@ ptm <- proc.time()
 mod_list = list(m = 3, R = "diagonal and equal")
 ape_dfa3_cov3 <- MARSS(dat, model = mod_list, form = "dfa", z.score = FALSE,
                        control = con_list, covariates = dd)
+MARSSparamCIs(ape_dfa3_cov3)
 ape_dfa_3_de_init <- MARSS(y = dat, model = mod_list, inits = init_list,
                       control = con_list)
 MARSSparamCIs(ape_dfa_3_de_init)
@@ -148,6 +149,114 @@ print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
             AICc=round(c(ape_dfa_3_de$AICc, ape_dfa_3_du$AICc, ape_dfa_3_eq$AICc, ape_dfa_3_uneq$AICc),3)),
       quote=FALSE)
+
+
+
+# *****Plot***** ------------------------------------------------------------- #
+## ----dfa-get-H-inv-----------------------------------------------------------------------------
+## get the estimated ZZ
+Z_est <- coef(ape_dfa3_cov3, type = "matrix")$Z
+## get the inverse of the rotation matrix
+H_inv <- varimax(Z_est)$rotmat
+
+## ----dfa-rotate-Z-x----------------------------------------------------------------------------
+## rotate factor loadings
+Z_rot = Z_est %*% H_inv   
+## rotate processes
+proc_rot = solve(H_inv) %*% ape_dfa3_cov3$states
+
+## ----dfa-plot-dfa1, fig.height=9, fig.width=8, eval=TRUE, fig.cap='Estimated states from the DFA model.'----
+ylbl <- apex_predators
+w_ts <- seq(dim(dat)[2])
+# the first four trends
+layout(matrix(c(1,2,3,4,5,6), mm, 2), widths = c(2,1))
+## par(mfcol=c(mm,2), mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
+par(mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
+## plot the processes
+for(i in 1:mm) {
+  ylm <- c(-1,1)*max(abs(proc_rot[i,]))
+  ## set up plot area
+  plot(w_ts,proc_rot[i,], type = "n", bty = "L",
+       ylim = ylm, xlab = "", ylab = "", xaxt = "n")
+  ## draw zero-line
+  abline(h=0, col="gray")
+  ## plot trend line
+  lines(w_ts, proc_rot[i,], lwd = 2)
+  lines(w_ts, proc_rot[i,], lwd = 2)
+  ## add panel labels
+  mtext(paste("State",i,"_apex"), side = 3, line = 0.5)
+  # axis(1,12*(0:dim(dat_1980)[2])+1,yr_frst+0:dim(dat_1980)[2])
+  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
+}
+## plot the loadings
+minZ <- 0
+ylm <- c(-1,1)*max(abs(Z_rot))
+for(i in 1:mm) {
+  plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), type="h",
+       lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, xlim=c(0.5,N_ts+0.5), 
+       col=clr, cex=1.5)
+  abline(h=c(-0.2,0.2), lty=2, col="gray")
+  for(j in 1:N_ts) {
+    if(Z_rot[j,i] > minZ) {text(j, -0.03, ylbl[j], srt=90, adj=1, cex=1, col=clr[j])}
+    if(Z_rot[j,i] < -minZ) {text(j, 0.03, ylbl[j], srt=90, adj=0, cex=1, col=clr[j])}
+    abline(h=0, lwd=1.5, col="gray")
+  } 
+  mtext(paste("Factor loadings on state",i),side=3,line=0.5)
+}
+
+## ----dfa-xy-states12, height=4, width=5, fig.cap='Cross-correlation plot of the two rotations.'----
+par(mai = c(0.9,0.9,0.1,0.1))
+ccf(proc_rot[1,],proc_rot[2,], lag.max = 12, main="")
+acf(proc_rot[1,], type = "covariance")
+
+## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
+## get model fits & CI's
+mod_fit <- get_DFA_fits(ape_dfa3_cov3)
+## plot the fits
+ylbl <- apex_predators
+par(mfrow = c(3,3), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
+for(i in 1:N_ts) {
+  up <- mod_fit$up[i,]
+  mn <- mod_fit$ex[i,]
+  lo <- mod_fit$lo[i,]
+  plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
+       ylim=c(min(lo),max(up)))
+  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
+  points(w_ts,dat[i,], pch=16, col=clr[i])
+  lines(w_ts, up, col="darkgray")
+  lines(w_ts, mn, col="black", lwd = 2)
+  lines(w_ts, lo, col="darkgray")
+}
+# ---------------------------------------------------------------------------- #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ============================================================================ #
 # ----- ----- ***** 2 trends ***** ----- ----- #
