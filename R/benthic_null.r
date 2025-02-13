@@ -4,22 +4,22 @@ source('get_DFA_fits.r')
 source('get_DFA1_fits.r')
 # based on Fish 550 lecture 10: DFA
 
-# Apex predators
-apex_dat <- read.csv("data/apex_2023.csv")
+# benthic foragers
+benthic_dat <- read.csv("data/ben_forg_2023.csv")
 # They "demean" in their example as opposed to z-score but I'm pretty sure I need
 # divide by the sd in addition to demean-ing, hence scale()
-apex_wide <- scale(apex_dat[,2:10])
+benthic_wide <- scale(benthic_dat[,2:10])
 
 ## ----dfa-trans-data----------------------------------------------------------------------------
 ## transpose data so time goes across columns
-dat <- t(apex_wide)
-colnames(dat) <- apex_dat[,1]
+dat <- t(benthic_wide)
+colnames(dat) <- benthic_dat[,1]
 ## get number of time series
 N_ts <- dim(dat)[1]
 ## get length of time series
 TT <- dim(dat)[2] 
 rownames(dat)
-apex_predators <- rownames(dat)
+benthic_foragers <- rownames(dat)
 
 ## ----dfa-plot-phytos, fig.height=9, fig.width=8, fig.cap='Demeaned time series of Lake Washington phytoplankton.'----
 spp <- rownames(dat)
@@ -78,11 +78,11 @@ QQ <- "identity"  # diag(mm)
 mod_list <- list(Z = ZZ, A = aa, D = DD, d = dd, R = RR,
                  B = BB, U = uu, C = CC, c = cc, Q = QQ)
 mod_list_du <- list(Z = ZZ, A = aa, D = DD, d = dd, R = RRdu,
-                 B = BB, U = uu, C = CC, c = cc, Q = QQ)
+                    B = BB, U = uu, C = CC, c = cc, Q = QQ)
 mod_list_eq <- list(Z = ZZ, A = aa, D = DD, d = dd, R = RReq,
-                 B = BB, U = uu, C = CC, c = cc, Q = QQ)
+                    B = BB, U = uu, C = CC, c = cc, Q = QQ)
 mod_list_uneq <- list(Z = ZZ, A = aa, D = DD, d = dd, R = RRuneq,
-                 B = BB, U = uu, C = CC, c = cc, Q = QQ)
+                      B = BB, U = uu, C = CC, c = cc, Q = QQ)
 ## list with model inits
 init_list <- list(x0 = matrix(rep(0, mm), mm, 1))
 ## list with model control parameters
@@ -91,23 +91,23 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)#, abstol=0.001)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_3_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_3_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_3_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_3_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_3_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_3_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_3_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_3_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
-# names(ape_dfa_3_de)
+names(ben_dfa_3_de)
 # the trends are in $states and the SE's are in $states.se
-# print(c(ape_dfa_3_de$logLik, ape_dfa_3_de$AICc))
+# print(c(ben_dfa_3_de$logLik, ben_dfa_3_de$AICc))
 # 
-# residuals(ape_dfa_3_eq)
+# residuals(ben_dfa_3_eq)
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_3_de$logLik, ape_dfa_3_du$logLik, ape_dfa_3_eq$logLik, ape_dfa_3_uneq$logLik),3)),
+            logLik=round(c(ben_dfa_3_de$logLik, ben_dfa_3_du$logLik, ben_dfa_3_eq$logLik, ben_dfa_3_uneq$logLik),3)),
       quote=FALSE)
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            AICc=round(c(ape_dfa_3_de$AICc, ape_dfa_3_du$AICc, ape_dfa_3_eq$AICc, ape_dfa_3_uneq$AICc),3)),
+            AICc=round(c(ben_dfa_3_de$AICc, ben_dfa_3_du$AICc, ben_dfa_3_eq$AICc, ben_dfa_3_uneq$AICc),3)),
       quote=FALSE)
 
 # ============================================================================ #
@@ -166,20 +166,20 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_2_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_2_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_2_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_2_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_2_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_2_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_2_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_2_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_2_de$logLik, ape_dfa_2_du$logLik, ape_dfa_2_eq$logLik, ape_dfa_2_uneq$logLik),3)),
+            logLik=round(c(ben_dfa_2_de$logLik, ben_dfa_2_du$logLik, ben_dfa_2_eq$logLik, ben_dfa_2_uneq$logLik),3)),
       quote=FALSE)
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            AICc=round(c(ape_dfa_2_de$AICc, ape_dfa_2_du$AICc, ape_dfa_2_eq$AICc, ape_dfa_2_uneq$AICc),3)),
+            AICc=round(c(ben_dfa_2_de$AICc, ben_dfa_2_du$AICc, ben_dfa_2_eq$AICc, ben_dfa_2_uneq$AICc),3)),
       quote=FALSE)
 
 
@@ -239,30 +239,28 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_1_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_1_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_1_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_1_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_1_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_1_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_1_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_1_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 # Trying to figure out how to get AICb --------------------------------------- #
 # ptm <- proc.time()
-# ape_dfa_1_de_aicb <- MARSSaic(ape_dfa_1_de,
+# ben_dfa_1_de_aicb <- MARSSaic(ben_dfa_1_de,
 #                           output = c("AICbp", "boot.params"),
 #                           Options = list(nboot = 10, silent = TRUE))
 # proc.time() - ptm
-# residuals(ape_dfa_1_de_aicb)
+# residuals(ben_dfa_1_de_aicb)
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_1_de$logLik, ape_dfa_1_du$logLik, ape_dfa_1_eq$logLik, ape_dfa_1_uneq$logLik),3)),
+            logLik=round(c(ben_dfa_1_de$logLik, ben_dfa_1_du$logLik, ben_dfa_1_eq$logLik, ben_dfa_1_uneq$logLik),3)),
       quote=FALSE)
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            AICc=round(c(ape_dfa_1_de$AICc, ape_dfa_1_du$AICc, ape_dfa_1_eq$AICc, ape_dfa_1_uneq$AICc),3)),
+            AICc=round(c(ben_dfa_1_de$AICc, ben_dfa_1_du$AICc, ben_dfa_1_eq$AICc, ben_dfa_1_uneq$AICc),3)),
       quote=FALSE)
-
-
 
 
 
@@ -322,21 +320,31 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_4_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_4_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_4_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_4_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_4_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_4_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_4_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_4_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_4_de$logLik, ape_dfa_4_du$logLik, ape_dfa_4_eq$logLik, ape_dfa_4_uneq$logLik),3)),
+            logLik=round(c(ben_dfa_4_de$logLik, ben_dfa_4_du$logLik, ben_dfa_4_eq$logLik, ben_dfa_4_uneq$logLik),3),
+            AICc=round(c(ben_dfa_4_de$AICc, ben_dfa_4_du$AICc, ben_dfa_4_eq$AICc, ben_dfa_4_uneq$AICc),3)),
       quote=FALSE)
-print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            AICc=round(c(ape_dfa_4_de$AICc, ape_dfa_4_du$AICc, ape_dfa_4_eq$AICc, ape_dfa_4_uneq$AICc),3)),
-      quote=FALSE)
+# print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
+#             AICc=round(c(ben_dfa_4_de$AICc, ben_dfa_4_du$AICc, ben_dfa_4_eq$AICc, ben_dfa_4_uneq$AICc),3)),
+#       quote=FALSE)
+
+# Trying to figure out how to get AICb --------------------------------------- #
+# ptm <- proc.time()
+# ben_dfa_4_eq_aicb <- MARSSaic(ben_dfa_4_eq,
+#                           output = c("AICbp", "boot.params"),
+#                           Options = list(nboot = 100, silent = TRUE))
+# proc.time() - ptm
+
+
 
 # ============================================================================ #
 # ----- ----- ***** 5 trends ***** ----- ----- #
@@ -394,26 +402,21 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_5_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_5_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_5_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_5_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_5_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_5_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_5_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_5_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
-print(cbind(trends=rep(5,4),
-            varcovar=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_5_de$logLik, ape_dfa_5_du$logLik, ape_dfa_5_eq$logLik, ape_dfa_5_uneq$logLik),3),
-            AICc=round(c(ape_dfa_5_de$AICc, ape_dfa_5_du$AICc, ape_dfa_5_eq$AICc, ape_dfa_5_uneq$AICc),3)),
+print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
+            logLik=round(c(ben_dfa_5_de$logLik, ben_dfa_5_du$logLik, ben_dfa_5_eq$logLik, ben_dfa_5_uneq$logLik),3)),
       quote=FALSE)
-# print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-#             logLik=round(c(ape_dfa_5_de$logLik, ape_dfa_5_du$logLik, ape_dfa_5_eq$logLik, ape_dfa_5_uneq$logLik),3)),
-#       quote=FALSE)
-# print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-#             AICc=round(c(ape_dfa_5_de$AICc, ape_dfa_5_du$AICc, ape_dfa_5_eq$AICc, ape_dfa_5_uneq$AICc),3)),
-#       quote=FALSE)
+print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
+            AICc=round(c(ben_dfa_5_de$AICc, ben_dfa_5_du$AICc, ben_dfa_5_eq$AICc, ben_dfa_5_uneq$AICc),3)),
+      quote=FALSE)
 
 # ============================================================================ #
 # ----- ----- ***** 6 trends ***** ----- ----- #
@@ -471,20 +474,20 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_6_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_6_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_6_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_6_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_6_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_6_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_6_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_6_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_6_de$logLik, ape_dfa_6_du$logLik, ape_dfa_6_eq$logLik, ape_dfa_6_uneq$logLik),3)),
+            logLik=round(c(ben_dfa_6_de$logLik, ben_dfa_6_du$logLik, ben_dfa_6_eq$logLik, ben_dfa_6_uneq$logLik),3)),
       quote=FALSE)
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            AICc=round(c(ape_dfa_6_de$AICc, ape_dfa_6_du$AICc, ape_dfa_6_eq$AICc, ape_dfa_6_uneq$AICc),3)),
+            AICc=round(c(ben_dfa_6_de$AICc, ben_dfa_6_du$AICc, ben_dfa_6_eq$AICc, ben_dfa_6_uneq$AICc),3)),
       quote=FALSE)
 
 # ============================================================================ #
@@ -543,16 +546,16 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_7_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_7_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_7_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_7_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_7_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_7_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_7_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_7_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 # Trying to figure out how to get AICb --------------------------------------- #
 # ptm <- proc.time()
-# ape_dfa_7_eq_aicb <- MARSSaic(ape_dfa_7_eq,
+# ben_dfa_7_eq_aicb <- MARSSaic(ben_dfa_7_eq,
 #                           output = c("AICbp", "boot.params"), 
 #                           Options = list(nboot = 10, silent = TRUE))
 # proc.time() - ptm
@@ -560,14 +563,13 @@ proc.time() - ptm
 
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
-print(cbind(trends=rep(7,4),
-            varcovar=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_7_de$logLik, ape_dfa_7_du$logLik, ape_dfa_7_eq$logLik, ape_dfa_7_uneq$logLik),3),
-            AICc=round(c(ape_dfa_7_de$AICc, ape_dfa_7_du$AICc, ape_dfa_7_eq$AICc, ape_dfa_7_uneq$AICc),3)),
+print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
+            logLik=round(c(ben_dfa_7_de$logLik, ben_dfa_7_du$logLik, ben_dfa_7_eq$logLik, ben_dfa_7_uneq$logLik),3)),
       quote=FALSE)
-# print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-#             AICc=round(c(ape_dfa_7_de$AICc, ape_dfa_7_du$AICc, ape_dfa_7_eq$AICc, ape_dfa_7_uneq$AICc),3)),
-#       quote=FALSE)
+print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
+            AICc=round(c(ben_dfa_7_de$AICc, ben_dfa_7_du$AICc, ben_dfa_7_eq$AICc, ben_dfa_7_uneq$AICc),3)),
+      quote=FALSE)
+
 
 
 
@@ -627,30 +629,32 @@ con_list <- list(maxit = 10000, allow.degen = TRUE)
 ## ----dfa-fit-dfa-1, cache=TRUE-----------------------------------------------------------------
 ## fit MARSS
 ptm <- proc.time()
-ape_dfa_8_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
-ape_dfa_8_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
-ape_dfa_8_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
-ape_dfa_8_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
+ben_dfa_8_de <- MARSS(y = dat, model = mod_list, inits = init_list, control = con_list)
+ben_dfa_8_du <- MARSS(y = dat, model = mod_list_du, inits = init_list, control = con_list)
+ben_dfa_8_eq <- MARSS(y = dat, model = mod_list_eq, inits = init_list, control = con_list)
+ben_dfa_8_uneq <- MARSS(y = dat, model = mod_list_uneq, inits = init_list, control = con_list)
 proc.time() - ptm
 # the trends are in $states and the SE's are in $states.se
 
 ## ----dfa-model-selection-----------------------------------------------------------------------
 # Compare AICc and logLik
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            logLik=round(c(ape_dfa_8_de$logLik, ape_dfa_8_du$logLik, ape_dfa_8_eq$logLik, ape_dfa_8_uneq$logLik),3)),
+            logLik=round(c(ben_dfa_8_de$logLik, ben_dfa_8_du$logLik, ben_dfa_8_eq$logLik, ben_dfa_8_uneq$logLik),3)),
       quote=FALSE)
 print(cbind(model=c("diag equal", "diag unequal", "equalvarcov", "unconstrained"),
-            AICc=round(c(ape_dfa_8_de$AICc, ape_dfa_8_du$AICc, ape_dfa_8_eq$AICc, ape_dfa_8_uneq$AICc),3)),
+            AICc=round(c(ben_dfa_8_de$AICc, ben_dfa_8_du$AICc, ben_dfa_8_eq$AICc, ben_dfa_8_uneq$AICc),3)),
       quote=FALSE)
 
 
-
-
+# ============================================================================ #
+# 4 trend model with equalvarcov has the lowest AICc
+## number of processes
+mm <- 4
 
 # *****Plot***** ------------------------------------------------------------- #
 ## ----dfa-get-H-inv-----------------------------------------------------------------------------
 ## get the estimated ZZ
-Z_est <- coef(ape_dfa_7_eq, type = "matrix")$Z
+Z_est <- coef(ben_dfa_4_eq, type = "matrix")$Z
 ## get the inverse of the rotation matrix
 H_inv <- varimax(Z_est)$rotmat
 
@@ -658,17 +662,16 @@ H_inv <- varimax(Z_est)$rotmat
 ## rotate factor loadings
 Z_rot = Z_est %*% H_inv   
 ## rotate processes
-proc_rot = solve(H_inv) %*% ape_dfa_7_eq$states
+proc_rot = solve(H_inv) %*% ben_dfa_4_eq$states
 
 ## ----dfa-plot-dfa1, fig.height=9, fig.width=8, eval=TRUE, fig.cap='Estimated states from the DFA model.'----
-ylbl <- apex_predators
+ylbl <- benthic_foragers
 w_ts <- seq(dim(dat)[2])
-# the first four trends
-layout(matrix(c(1,2,3,4,5,6,7,8), (mm-3), 2), widths = c(2,1))
+layout(matrix(c(1,2,3,4,5,6,7,8), mm, 2), widths = c(2,1))
 ## par(mfcol=c(mm,2), mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
 par(mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
 ## plot the processes
-for(i in 1:(mm-3)) {
+for(i in 1:mm) {
   ylm <- c(-1,1)*max(abs(proc_rot[i,]))
   ## set up plot area
   plot(w_ts,proc_rot[i,], type = "n", bty = "L",
@@ -679,14 +682,14 @@ for(i in 1:(mm-3)) {
   lines(w_ts, proc_rot[i,], lwd = 2)
   lines(w_ts, proc_rot[i,], lwd = 2)
   ## add panel labels
-  mtext(paste("State",i,"_apex"), side = 3, line = 0.5)
+  mtext(paste("State",i), side = 3, line = 0.5)
   # axis(1,12*(0:dim(dat_1980)[2])+1,yr_frst+0:dim(dat_1980)[2])
   axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
 }
 ## plot the loadings
 minZ <- 0
 ylm <- c(-1,1)*max(abs(Z_rot))
-for(i in 1:(mm-3)) {
+for(i in 1:mm) {
   plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), type="h",
        lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, xlim=c(0.5,N_ts+0.5), 
        col=clr, cex=1.5)
@@ -698,42 +701,6 @@ for(i in 1:(mm-3)) {
   } 
   mtext(paste("Factor loadings on state",i),side=3,line=0.5)
 }
-# *****the last three trends***** ---------- ---------- ---------- ---------- #
-layout(matrix(c(1,2,3,4,5,6), (mm-4), 2), widths = c(2,1))
-## par(mfcol=c(mm,2), mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
-par(mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
-## plot the processes
-for(i in 5:mm) {
-  ylm <- c(-1,1)*max(abs(proc_rot[i,]))
-  ## set up plot area
-  plot(w_ts,proc_rot[i,], type = "n", bty = "L",
-       ylim = ylm, xlab = "", ylab = "", xaxt = "n")
-  ## draw zero-line
-  abline(h=0, col="gray")
-  ## plot trend line
-  lines(w_ts, proc_rot[i,], lwd = 2)
-  lines(w_ts, proc_rot[i,], lwd = 2)
-  ## add panel labels
-  mtext(paste("State",i,"_apex"), side = 3, line = 0.5)
-  # axis(1,12*(0:dim(dat_1980)[2])+1,yr_frst+0:dim(dat_1980)[2])
-  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
-}
-## plot the loadings
-minZ <- 0
-ylm <- c(-1,1)*max(abs(Z_rot))
-for(i in 5:mm) {
-  plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), type="h",
-       lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, xlim=c(0.5,N_ts+0.5), 
-       col=clr, cex=1.5)
-  abline(h=c(-0.2,0.2), lty=2, col="gray")
-  for(j in 1:N_ts) {
-    if(Z_rot[j,i] > minZ) {text(j, -0.03, ylbl[j], srt=90, adj=1, cex=1, col=clr[j])}
-    if(Z_rot[j,i] < -minZ) {text(j, 0.03, ylbl[j], srt=90, adj=0, cex=1, col=clr[j])}
-    abline(h=0, lwd=1.5, col="gray")
-  } 
-  mtext(paste("Factor loadings on state",i),side=3,line=0.5)
-}
-
 
 ## ----dfa-xy-states12, height=4, width=5, fig.cap='Cross-correlation plot of the two rotations.'----
 par(mai = c(0.9,0.9,0.1,0.1))
@@ -741,9 +708,9 @@ ccf(proc_rot[1,],proc_rot[2,], lag.max = 12, main="")
 
 ## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
 ## get model fits & CI's
-mod_fit <- get_DFA_fits(ape_dfa_7_eq)
+mod_fit <- get_DFA_fits(ben_dfa_4_eq)
 ## plot the fits
-ylbl <- apex_predators
+ylbl <- benthic_foragers
 par(mfrow = c(3,3), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
 for(i in 1:N_ts) {
   up <- mod_fit$up[i,]
@@ -758,4 +725,6 @@ for(i in 1:N_ts) {
   lines(w_ts, lo, col="darkgray")
 }
 # ---------------------------------------------------------------------------- #
+
+
 
