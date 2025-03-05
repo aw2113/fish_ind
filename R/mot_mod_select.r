@@ -1,5 +1,6 @@
 library('MARSS')
 library('viridis')
+library('Hmisc')
 source('helper_funcs.r')
 # based on Fish 550 lecture 10: DFA
 # motile_epifauna
@@ -21,12 +22,15 @@ motile_epifauna <- rownames(dat)
 
 ## ----dfa-plot-phytos, fig.height=9, fig.width=8, fig.cap='Demeaned time series of Lake Washington phytoplankton.'----
 spp <- rownames(dat)
-clr <- viridis(dim(dat)[1])
+clr <- viridis(dim(dat)[1]+1)
 cnt <- 1
-par(mfrow = c(3,4), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
+par(mfrow = c(3,4), mai = c(0.5,0.7,0.2,0.1), omi = c(0,0,0,0))
 for(i in spp){
-  plot(dat[i,],xlab = "",ylab="biomass", bty = "L", xaxt = "n", pch=16, col=clr[cnt], type="b")
-  axis(1,1:dim(dat)[2],1982:2023)
+  plot(1982:2023, dat[i,], xlab = "",ylab="biomass", bty = "L", xaxt = "n", 
+       pch=16, col=clr[cnt], type="b")
+  # axis(1,1:dim(dat)[2],1982:2023)
+  axis(1, labels = TRUE, cex.axis=0.75)
+  minor.tick(nx = 5, tick.ratio=0.3)
   title(i)
   cnt <- cnt + 1
 }
@@ -208,14 +212,15 @@ for(i in 1:mm) {
   ylm <- c(-1,1)*max(abs(proc_rot[i,]))
   ## set up plot area
   plot(w_ts,proc_rot[i,], type = "n", bty = "L",
-       ylim = ylm, xlab = "", ylab = "", xaxt = "n")
+       ylim = ylm, xlab = "", ylab = "", xaxt = "n", cex=1)
   ## draw zero-line
   abline(h=0, col="gray")
   ## plot trend line
   lines(w_ts, proc_rot[i,], lwd = 2)
   lines(w_ts, proc_rot[i,], lwd = 2)
   ## add panel labels
-  mtext(paste("State",i,"_motile_epifauna", " diagonal and equal"), side = 3, line = 0.5)
+  mtext(paste("State",i,"_motile_epifauna", " diagonal and equal"), side = 3, 
+        line = 0.5, cex = 0.75)
   # axis(1,12*(0:dim(dat_1980)[2])+1,yr_frst+0:dim(dat_1980)[2])
   axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
 }
@@ -223,16 +228,17 @@ for(i in 1:mm) {
 minZ <- 0
 ylm <- c(-1,1)*max(abs(Z_rot))
 for(i in 1:mm) {
-  plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), type="h",
-       lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, xlim=c(0.5,N_ts+0.5), 
-       col=clr, cex=1.5)
+  plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), 
+       type="h", lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, 
+       xlim=c(0.5,N_ts+0.5), 
+       col=clr, cex=1, bty="n")
   abline(h=c(-0.2,0.2), lty=2, col="gray")
+  abline(h=0, lwd=1.1, col="gray")
   for(j in 1:N_ts) {
-    if(Z_rot[j,i] > minZ) {text(j, -0.03, ylbl[j], srt=90, adj=1, cex=1, col=clr[j])}
-    if(Z_rot[j,i] < -minZ) {text(j, 0.03, ylbl[j], srt=90, adj=0, cex=1, col=clr[j])}
-    abline(h=0, lwd=1.5, col="gray")
+    if(Z_rot[j,i] > minZ) {text(j, -0.03, ylbl[j], srt=90, adj=1, cex=0.75, col=clr[j])}
+    if(Z_rot[j,i] < -minZ) {text(j, 0.03, ylbl[j], srt=90, adj=0, cex=0.75, col=clr[j])}
   } 
-  mtext(paste("Factor loadings on state",i),side=3,line=0.5)
+  mtext(paste("Factor loadings on state",i),side=3,line=0.5, cex=0.75)
 }
 
 ## ----dfa-xy-states12, height=4, width=5, fig.cap='Cross-correlation plot of the two rotations.'----
@@ -252,10 +258,10 @@ for(i in 1:N_ts) {
   mn <- mot_dfa4_cov2_de_mod_fits$ex[i,]
   lo <- mot_dfa4_cov2_de_mod_fits$lo[i,]
   plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
-       ylim=c(min(lo),max(up)))
-  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
+       ylim=c(min(lo),max(up)), bty="n", cex.axis=0.75)
+  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)), cex.axis=0.75)
   points(w_ts,dat[i,], pch=16, col=clr[i])
   lines(w_ts, up, col="darkgray")
-  lines(w_ts, mn, col="black", lwd = 2)
+  lines(w_ts, mn, col="gray40", lwd = 2)
   lines(w_ts, lo, col="darkgray")
 }
