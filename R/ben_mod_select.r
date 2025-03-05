@@ -277,75 +277,75 @@ for(i in 1:N_ts) {
 # ------------------------------------------------
 # 1 covariate: totc (cov3)
 ## get the estimated ZZ
-Z_est <- coef(ben_dfa4_cov3_eq, type = "matrix")$Z
-## get the inverse of the rotation matrix
-H_inv <- varimax(Z_est)$rotmat
-## ----dfa-rotate-Z-x----------------------------------------------------------------------------
-## rotate factor loadings
-Z_rot = Z_est %*% H_inv   
-## rotate processes
-proc_rot = solve(H_inv) %*% ben_dfa4_cov3_eq$states
-
-## ----dfa-plot-dfa1, fig.height=9, fig.width=8, eval=TRUE, fig.cap='Estimated states from the DFA model.'----
-ylbl <- benthic_foragers
-w_ts <- seq(dim(dat)[2])
-# the first four trends
-layout(matrix(c(1,2,3,4,5,6,7,8), mm, 2), widths = c(2,1))
-## par(mfcol=c(mm,2), mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
-par(mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
-## plot the processes
-for(i in 1:mm) {
-  ylm <- c(-1,1)*max(abs(proc_rot[i,]))
-  ## set up plot area
-  plot(w_ts,proc_rot[i,], type = "n", bty = "L",
-       ylim = ylm, xlab = "", ylab = "", xaxt = "n")
-  ## draw zero-line
-  abline(h=0, col="gray")
-  ## plot trend line
-  lines(w_ts, proc_rot[i,], lwd = 2)
-  lines(w_ts, proc_rot[i,], lwd = 2)
-  ## add panel labels
-  mtext(paste("State",i,"_benthic_foragers", " equalvarcov"), side = 3, line = 0.5)
-  # axis(1,12*(0:dim(dat_1980)[2])+1,yr_frst+0:dim(dat_1980)[2])
-  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
-}
-## plot the loadings
-minZ <- 0
-ylm <- c(-1,1)*max(abs(Z_rot))
-for(i in 1:mm) {
-  plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), type="h",
-       lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, xlim=c(0.5,N_ts+0.5), 
-       col=clr, cex=1.5)
-  abline(h=c(-0.2,0.2), lty=2, col="gray")
-  for(j in 1:N_ts) {
-    if(Z_rot[j,i] > minZ) {text(j, -0.03, ylbl[j], srt=90, adj=1, cex=1, col=clr[j])}
-    if(Z_rot[j,i] < -minZ) {text(j, 0.03, ylbl[j], srt=90, adj=0, cex=1, col=clr[j])}
-    abline(h=0, lwd=1.5, col="gray")
-  } 
-  mtext(paste("Factor loadings on state",i),side=3,line=0.5)
-}
-
-## ----dfa-xy-states12, height=4, width=5, fig.cap='Cross-correlation plot of the two rotations.'----
-par(mai = c(0.9,0.9,0.1,0.1))
-ccf(proc_rot[1,],proc_rot[2,], lag.max = 12, main="")
-acf(proc_rot[1,], type = "covariance")
-
-
-## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
-## get model fits & CI's
-ben_dfa4_cov3_eq_mod_fits <- get_DFA_fits(ben_dfa4_cov3_eq)
-## plot the fits
-ylbl <- benthic_foragers
-par(mfrow = c(3,3), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
-for(i in 1:N_ts) {
-  up <- ben_dfa4_cov3_eq_mod_fits$up[i,]
-  mn <- ben_dfa4_cov3_eq_mod_fits$ex[i,]
-  lo <- ben_dfa4_cov3_eq_mod_fits$lo[i,]
-  plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
-       ylim=c(min(lo),max(up)), bty="n", cex.axis=0.75)
-  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)), cex.axis=0.75)
-  points(w_ts,dat[i,], pch=16, col=clr[i])
-  lines(w_ts, up, col="darkgray")
-  lines(w_ts, mn, col="gray40", lwd = 2)
-  lines(w_ts, lo, col="darkgray")
-}
+# Z_est <- coef(ben_dfa4_cov3_eq, type = "matrix")$Z
+# ## get the inverse of the rotation matrix
+# H_inv <- varimax(Z_est)$rotmat
+# ## ----dfa-rotate-Z-x----------------------------------------------------------------------------
+# ## rotate factor loadings
+# Z_rot = Z_est %*% H_inv   
+# ## rotate processes
+# proc_rot = solve(H_inv) %*% ben_dfa4_cov3_eq$states
+# 
+# ## ----dfa-plot-dfa1, fig.height=9, fig.width=8, eval=TRUE, fig.cap='Estimated states from the DFA model.'----
+# ylbl <- benthic_foragers
+# w_ts <- seq(dim(dat)[2])
+# # the first four trends
+# layout(matrix(c(1,2,3,4,5,6,7,8), mm, 2), widths = c(2,1))
+# ## par(mfcol=c(mm,2), mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
+# par(mai = c(0.5,0.5,0.5,0.1), omi = c(0,0,0,0))
+# ## plot the processes
+# for(i in 1:mm) {
+#   ylm <- c(-1,1)*max(abs(proc_rot[i,]))
+#   ## set up plot area
+#   plot(w_ts,proc_rot[i,], type = "n", bty = "L",
+#        ylim = ylm, xlab = "", ylab = "", xaxt = "n")
+#   ## draw zero-line
+#   abline(h=0, col="gray")
+#   ## plot trend line
+#   lines(w_ts, proc_rot[i,], lwd = 2)
+#   lines(w_ts, proc_rot[i,], lwd = 2)
+#   ## add panel labels
+#   mtext(paste("State",i,"_benthic_foragers", " equalvarcov"), side = 3, line = 0.5)
+#   # axis(1,12*(0:dim(dat_1980)[2])+1,yr_frst+0:dim(dat_1980)[2])
+#   axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
+# }
+# ## plot the loadings
+# minZ <- 0
+# ylm <- c(-1,1)*max(abs(Z_rot))
+# for(i in 1:mm) {
+#   plot(c(1:N_ts)[abs(Z_rot[,i])>minZ], as.vector(Z_rot[abs(Z_rot[,i])>minZ,i]), type="h",
+#        lwd = 2, xlab = "", ylab = "", xaxt = "n", ylim = ylm, xlim=c(0.5,N_ts+0.5), 
+#        col=clr, cex=1.5)
+#   abline(h=c(-0.2,0.2), lty=2, col="gray")
+#   for(j in 1:N_ts) {
+#     if(Z_rot[j,i] > minZ) {text(j, -0.03, ylbl[j], srt=90, adj=1, cex=1, col=clr[j])}
+#     if(Z_rot[j,i] < -minZ) {text(j, 0.03, ylbl[j], srt=90, adj=0, cex=1, col=clr[j])}
+#     abline(h=0, lwd=1.5, col="gray")
+#   } 
+#   mtext(paste("Factor loadings on state",i),side=3,line=0.5)
+# }
+# 
+# ## ----dfa-xy-states12, height=4, width=5, fig.cap='Cross-correlation plot of the two rotations.'----
+# par(mai = c(0.9,0.9,0.1,0.1))
+# ccf(proc_rot[1,],proc_rot[2,], lag.max = 12, main="")
+# acf(proc_rot[1,], type = "covariance")
+# 
+# 
+# ## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
+# ## get model fits & CI's
+# ben_dfa4_cov3_eq_mod_fits <- get_DFA_fits(ben_dfa4_cov3_eq)
+# ## plot the fits
+# ylbl <- benthic_foragers
+# par(mfrow = c(3,3), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
+# for(i in 1:N_ts) {
+#   up <- ben_dfa4_cov3_eq_mod_fits$up[i,]
+#   mn <- ben_dfa4_cov3_eq_mod_fits$ex[i,]
+#   lo <- ben_dfa4_cov3_eq_mod_fits$lo[i,]
+#   plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
+#        ylim=c(min(lo),max(up)), bty="n", cex.axis=0.75)
+#   axis(1,seq(1,42,10),as.character(seq(1982,2023,10)), cex.axis=0.75)
+#   points(w_ts,dat[i,], pch=16, col=clr[i])
+#   lines(w_ts, up, col="darkgray")
+#   lines(w_ts, mn, col="gray40", lwd = 2)
+#   lines(w_ts, lo, col="darkgray")
+# }

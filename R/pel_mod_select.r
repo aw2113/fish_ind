@@ -320,43 +320,43 @@ mm <- 2
 
 ## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
 ## get model fits & CI's
-pel_dfa2_cov123_de_mod_fits <- get_DFA_fits(pel_dfa2_cov123_de)
-## plot the fits
-ylbl <- pelagic_foragers
-par(mfrow = c(3,4), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
-for(i in 1:N_ts) {
-  up <- pel_dfa2_cov123_de_mod_fits$up[i,]
-  mn <- pel_dfa2_cov123_de_mod_fits$ex[i,]
-  lo <- pel_dfa2_cov123_de_mod_fits$lo[i,]
-  plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
-       ylim=c(min(lo),max(up)))
-  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
-  points(w_ts,dat[i,], pch=16, col=clr[i])
-  lines(w_ts, up, col="darkgray")
-  lines(w_ts, mn, col="black", lwd = 2)
-  lines(w_ts, lo, col="darkgray")
-}
-
-mm <- 1
-
-## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
-## get model fits & CI's
-pel_dfa1_cov123_de_mod_fits <- get_DFA1_fits(pel_dfa1_cov123_de)
-## plot the fits
-ylbl <- pelagic_foragers
-par(mfrow = c(3,4), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
-for(i in 1:N_ts) {
-  up <- pel_dfa1_cov123_de_mod_fits$up[i,]
-  mn <- pel_dfa1_cov123_de_mod_fits$ex[i,]
-  lo <- pel_dfa1_cov123_de_mod_fits$lo[i,]
-  plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
-       ylim=c(min(lo),max(up)))
-  axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
-  points(w_ts,dat[i,], pch=16, col=clr[i])
-  lines(w_ts, up, col="darkgray")
-  lines(w_ts, mn, col="black", lwd = 2)
-  lines(w_ts, lo, col="darkgray")
-}
+# pel_dfa2_cov123_de_mod_fits <- get_DFA_fits(pel_dfa2_cov123_de)
+# ## plot the fits
+# ylbl <- pelagic_foragers
+# par(mfrow = c(3,4), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
+# for(i in 1:N_ts) {
+#   up <- pel_dfa2_cov123_de_mod_fits$up[i,]
+#   mn <- pel_dfa2_cov123_de_mod_fits$ex[i,]
+#   lo <- pel_dfa2_cov123_de_mod_fits$lo[i,]
+#   plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
+#        ylim=c(min(lo),max(up)))
+#   axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
+#   points(w_ts,dat[i,], pch=16, col=clr[i])
+#   lines(w_ts, up, col="darkgray")
+#   lines(w_ts, mn, col="black", lwd = 2)
+#   lines(w_ts, lo, col="darkgray")
+# }
+# 
+# mm <- 1
+# 
+# ## ----dfa-plot-dfa-fits, fig.height=9, fig.width=8, fig.cap='Data and fits from the DFA model.'----
+# ## get model fits & CI's
+# pel_dfa1_cov123_de_mod_fits <- get_DFA1_fits(pel_dfa1_cov123_de)
+# ## plot the fits
+# ylbl <- pelagic_foragers
+# par(mfrow = c(3,4), mai = c(0.5,0.7,0.1,0.1), omi = c(0,0,0,0))
+# for(i in 1:N_ts) {
+#   up <- pel_dfa1_cov123_de_mod_fits$up[i,]
+#   mn <- pel_dfa1_cov123_de_mod_fits$ex[i,]
+#   lo <- pel_dfa1_cov123_de_mod_fits$lo[i,]
+#   plot(w_ts,mn,xlab = "",ylab=ylbl[i],xaxt = "n",type = "n", cex.lab = 1.2,
+#        ylim=c(min(lo),max(up)))
+#   axis(1,seq(1,42,10),as.character(seq(1982,2023,10)))
+#   points(w_ts,dat[i,], pch=16, col=clr[i])
+#   lines(w_ts, up, col="darkgray")
+#   lines(w_ts, mn, col="black", lwd = 2)
+#   lines(w_ts, lo, col="darkgray")
+# }
 
 
 
