@@ -355,6 +355,26 @@ for(i in 1:N_ts) {
 }
 
 
+# ---------------------------------------------------------------------------- #
+# Covariate effects
+ape_dfa4_cov2_de_mle <- MARSSparamCIs(ape_dfa4_cov2_de)
+ape_dfa4_cov2_de_mle$parMean[31:39]
+ape_dfa4_cov2_de_mle$par.upCI$A
+ape_dfa4_cov2_de_mle$par.lowCI$A
+
+install.packages("plotrix")      
+library("plotrix")
+plotCI(1:9, y=ape_dfa4_cov2_de_mle$parMean[31:39],
+       li = ape_dfa4_cov2_de_mle$par.lowCI$A,
+       ui = ape_dfa4_cov2_de_mle$par.upCI$A,
+       ylab = "covariate effect (sea ice)",
+       xaxt= 'n', xlab= "",
+       scol = clr[1:9],
+       main = "Apex predators")
+abline(h=0, col="gray50")
+
+
+
 # # sum of squared residuals
 # ssq_resid_de <- matrix(nrow = length(apex_predators), ncol = 1)
 # ssq_resid_eq <- matrix(nrow = length(apex_predators), ncol = 1)
